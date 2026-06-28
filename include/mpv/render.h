@@ -422,6 +422,24 @@ typedef enum mpv_render_param_type {
      * See MPV_RENDER_PARAM_SW_STRIDE for alignment requirements.
      */
     MPV_RENDER_PARAM_SW_POINTER = 20,
+    /*
+     * MPV_RENDER_API_TYPE_VULKAN only: Vulkan device initialization parameters.
+     * Valid for mpv_render_context_create().
+     * Type: mpv_vulkan_init_params* (see render_vk.h)
+     */
+    MPV_RENDER_PARAM_VULKAN_INIT_PARAMS = 21,
+    /*
+     * MPV_RENDER_API_TYPE_VULKAN only: VkImage to render into.
+     * Valid for mpv_render_context_render().
+     * Type: mpv_vulkan_fbo* (see render_vk.h)
+     */
+    MPV_RENDER_PARAM_VULKAN_FBO = 22,
+    /*
+     * MPV_RENDER_API_TYPE_METAL only: Metal device initialization parameters.
+     * Valid for mpv_render_context_create().
+     * Type: mpv_metal_init_params* (see render_mtl.h)
+     */
+    MPV_RENDER_PARAM_METAL_INIT_PARAMS = 23,
 } mpv_render_param_type;
 
 /**
@@ -466,6 +484,15 @@ typedef struct mpv_render_param {
  */
 // See render_gl.h
 #define MPV_RENDER_API_TYPE_OPENGL "opengl"
+// OpenGL via libplacebo. Requires the same MPV_RENDER_PARAM_OPENGL_INIT_PARAMS
+// and MPV_RENDER_PARAM_OPENGL_FBO parameters as MPV_RENDER_API_TYPE_OPENGL, but
+// uses the libplacebo renderer (vo=gpu-next equivalent) instead of the legacy
+// gl_video renderer (vo=gpu equivalent).
+#define MPV_RENDER_API_TYPE_OPENGL_NEXT "opengl-next"
+// See render_vk.h
+#define MPV_RENDER_API_TYPE_VULKAN "vulkan"
+// See render_mtl.h
+#define MPV_RENDER_API_TYPE_METAL "metal"
 // See section "Software renderer"
 #define MPV_RENDER_API_TYPE_SW "sw"
 

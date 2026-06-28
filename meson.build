@@ -260,6 +260,9 @@ sources = files(
     'video/out/placebo/utils.c',
     'video/out/vo_gpu_next.c',
     'video/out/gpu_next/context.c',
+    'video/out/gpu_next/pl_utils.c',
+    'video/out/gpu_next/libmpv_gpu_next.c',
+    'video/out/gpu_next/libmpv_gl_pl.c',
 
     ## osdep
     'osdep/io.c',
@@ -1334,7 +1337,12 @@ if features['vulkan']
     sources += files('video/out/hwdec/hwdec_vulkan.c',
                      'video/out/vulkan/context.c',
                      'video/out/vulkan/utils.c',
+                     'video/out/gpu_next/libmpv_vk_pl.c',
                      'video/filter/vf_gpu_vulkan.c')
+endif
+
+if darwin and libplacebo.get_variable('pl_has_metal', default_value: '0') == '1'
+    sources += files('video/out/gpu_next/libmpv_mtl_pl.c')
 endif
 
 if features['vulkan'] and features['android']
@@ -1664,11 +1672,11 @@ features += {'macos-cocoa-cb': macos_cocoa_cb.allowed()}
 if features['macos-cocoa-cb']
     swift_sources += files('osdep/mac/libmpv_helper.swift',
                            'video/out/cocoa_cb_common.swift',
-                           'video/out/mac/gl_layer.swift')
+                           'video/out/mac/gl_layer.swift',
+                           'video/out/mac_common.swift',
+                           'video/out/mac/metal_layer.swift')
 endif
 if features['cocoa'] and features['vulkan'] and features['swift']
-    swift_sources += files('video/out/mac_common.swift',
-                           'video/out/mac/metal_layer.swift')
     sources += files('video/out/vulkan/context_mac.m')
 endif
 

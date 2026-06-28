@@ -201,8 +201,7 @@ void gpu_ctx_destroy(struct gpu_ctx **ctxp)
 
 #if HAVE_VULKAN
     if (ra_vk_ctx_get(ctx->ra_ctx))
-        // vulkan RA context handles pl cleanup by itself,
-        // skip common local clean-up.
+        // vulkan RA handles pl cleanup itself.
         goto skip_common_pl_cleanup;
 #endif
 
