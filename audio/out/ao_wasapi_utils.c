@@ -22,6 +22,17 @@
 #include <windows.h>
 #include <errors.h>
 #include <ksguid.h>
+
+#ifndef WAVE_FORMAT_DOLBY_AC3_SPDIF
+#define WAVE_FORMAT_DOLBY_AC3_SPDIF 0x0092
+#endif
+#ifndef WAVE_FORMAT_DTS
+#define WAVE_FORMAT_DTS 0x0008
+#endif
+#ifndef WAVE_FORMAT_DTS_HD
+#define WAVE_FORMAT_DTS_HD 0x000b
+#endif
+
 #include <ksmedia.h>
 #include <avrt.h>
 
