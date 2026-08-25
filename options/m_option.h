@@ -253,6 +253,14 @@ union m_option_value {
     struct m_channels channels;
 };
 
+// Keep a fully zeroed instance of m_option_value to use as a default value,
+// before any specific union member is used. C standard says that `= {0}`
+// activates and initializes only the first member of the union, leaving the
+// remaining members (and padding) undefined. We expect the whole union to be
+// zeroed, as it is used as a default value, so initialize from a zeroed
+// default instance to ensure proper initialization.
+static const union m_option_value m_option_value_default;
+
 ////////////////////////////////////////////////////////////////////////////
 
 struct m_option_action {

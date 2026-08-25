@@ -105,6 +105,7 @@ struct m_group_data {
     uint64_t ts;        // timestamp of the data copy
 };
 
+// File-scope static: fully zero-initialized by {0} (no auto-var-init issue).
 static const union m_option_value default_value = {0};
 
 static void add_sub_group(struct m_config_shadow *shadow, const char *name_prefix,
