@@ -624,14 +624,16 @@ static void update_avsync_before_frame(struct MPContext *mpctx)
 
         mpctx->time_frame = buffered_audio - mpctx->delay / mpctx->video_speed;
     } else {
-        /* If we're more than 200 ms behind the right playback
+        /* If we're more than the give-up threshold behind the right playback
          * position, don't try to speed up display of following
          * frames to catch up; continue with default speed from
-         * the current frame instead.
+         * the current frame instead. Without the catch-up correction
+         * (--video-catchup=no), this permanently accepts the offset, so the
+         * threshold is tunable via --video-catchup-giveup.
          * If untimed is set always output frames immediately
          * without sleeping.
          */
-        if (mpctx->time_frame < -0.2 || opts->untimed ||
+        if (mpctx->time_frame < -opts->video_catchup_giveup || opts->untimed ||
             (vo->driver->caps & VO_CAP_UNTIMED))
             mpctx->time_frame = 0;
     }
@@ -1190,6 +1192,13 @@ void write_video(struct MPContext *mpctx)
     mpctx->time_frame -= get_relative_time(mpctx);
     update_avsync_before_frame(mpctx);
 
+    // Fork: expose current pacing offset (seconds) for cross-machine sync
+    // field diagnostics. Runs for every frame in all sync modes.
+    // Negative time_frame = video behind its reference (audio clock or wall
+    // clock). A persistent non-zero value across machines = constant offset;
+    // a growing value = rate mismatch.
+    MP_STATS(mpctx, "value %f time-frame", mpctx->time_frame);
+
     // Enforce timing subtitles to video frames.
     osd_set_force_video_pts(mpctx->osd, MP_NOPTS_VALUE);
 
@@ -1242,6 +1251,18 @@ void write_video(struct MPContext *mpctx)
         diff = -1; // disable frame dropping and aspects of frame timing
     if (diff >= 0) {
         diff /= mpctx->video_speed;
+        /* Restore the 0.36 catch-up correction (removed upstream by
+         * eaae9e9cf5): when playback is behind (time_frame < 0), shorten
+         * this frame's display window so the next frame is scheduled earlier
+         * and playback catches up. Upstream removed it because the shortened
+         * duration also fed the drop decision, double-counting the deviation
+         * (drops engaged at -0.5 frame). That trade-off matters for
+         * e.g. 59.94fps@2x, not for 1x cluster playback where restoring
+         * cross-machine sync matters more. --video-catchup=no gives upstream
+         * behavior.
+         */
+        if (opts->video_catchup && mpctx->time_frame < 0)
+            diff += mpctx->time_frame;
         frame->duration = MP_TIME_S_TO_NS(MPCLAMP(diff, 0, 10));
     }
 

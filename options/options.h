@@ -266,6 +266,8 @@ typedef struct MPOpts {
     float audio_delay;
     float default_max_pts_correction;
     int autosync;
+    bool video_catchup;
+    double video_catchup_giveup;
     int frame_dropping;
     bool video_latency_hacks;
     int term_osd;
