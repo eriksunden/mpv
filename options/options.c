@@ -201,6 +201,9 @@ static const m_option_t mp_vo_opt_list[] = {
         {"display-vdrop", VS_DISP_VDROP},
         {"display-desync", VS_DISP_NONE},
         {"desync", VS_NONE})},
+    {"video-catchup", OPT_BOOL(video_catchup)},
+    {"video-catchup-giveup", OPT_DOUBLE(video_catchup_giveup),
+        M_RANGE(0.0, 10.0)},
 #if HAVE_X11
     {"x11-netwm", OPT_CHOICE(x11_netwm, {"auto", 0}, {"no", -1}, {"yes", 1})},
     {"x11-bypass-compositor", OPT_CHOICE(x11_bypass_compositor,
@@ -1063,6 +1066,8 @@ static const struct MPOpts mp_default_opts = {
     .edition_id = -1,
     .default_max_pts_correction = -1,
     .initial_audio_sync = true,
+    .video_catchup = true,
+    .video_catchup_giveup = 0.2,
     .frame_dropping = 1,
     .term_osd = 2,
     .term_osd_bar_chars = "[-+-]",

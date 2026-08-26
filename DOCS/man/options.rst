@@ -8263,6 +8263,31 @@ Video Sync
     frame dropping due to the audio "overshooting" and skipping multiple video
     frames before the sync logic can react.
 
+``--video-catchup=<yes|no>``
+    When playing behind the ideal position (video slower than its reference,
+    e.g. the audio clock), shorten the current frame's display window so the
+    next frame is scheduled earlier and playback catches up (default: yes).
+    This restores the mpv 0.36 pacing behavior, which keeps machines that
+    start playback at the same time in step.
+
+    Upstream mpv (since commit ``eaae9e9cf5``, 0.41) removed this correction
+    because it also fed the frame-drop decision, which double-counted the
+    deviation and caused spurious frame drops (most visible with e.g.
+    59.94 fps content at 2x speed). Set this to ``no`` to get upstream
+    behavior (never shorten the display window; frames are only dropped when
+    behind by more than a full frame duration, so sub-frame offsets persist
+    indefinitely).
+
+    This only applies to audio timing modes (``--video-sync=audio``, the
+    default), including the wall-clock fallback when there is no audio.
+
+``--video-catchup-giveup=<seconds>``
+    When playing more than this many seconds behind the ideal position, stop
+    trying to catch up and continue at normal speed from the current frame
+    (default: 0.2). With ``--video-catchup=no`` this permanently accepts the
+    accumulated offset, so a larger value may be useful to reduce how often
+    that happens.
+
 Miscellaneous
 -------------
 
