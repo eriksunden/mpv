@@ -644,8 +644,8 @@ static void update_avsync_before_frame(struct MPContext *mpctx)
          * If untimed is set always output frames immediately
          * without sleeping.
          */
-        if (mpctx->time_frame < -opts->video_catchup_giveup || opts->untimed ||
-            (vo->driver->caps & VO_CAP_UNTIMED))
+        if (mpctx->time_frame < -vo->opts->video_catchup_giveup ||
+            opts->untimed || (vo->driver->caps & VO_CAP_UNTIMED))
             mpctx->time_frame = 0;
     }
 }
@@ -1302,7 +1302,7 @@ void write_video(struct MPContext *mpctx)
          * cross-machine sync matters more. --video-catchup=no gives upstream
          * behavior.
          */
-        if (opts->video_catchup && mpctx->time_frame < 0)
+        if (vo->opts->video_catchup && mpctx->time_frame < 0)
             diff += mpctx->time_frame;
         frame->duration = MP_TIME_S_TO_NS(MPCLAMP(diff, 0, 10));
     }
