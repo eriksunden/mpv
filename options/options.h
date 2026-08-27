@@ -84,6 +84,8 @@ typedef struct mp_vo_opts {
     double display_fps_override;
     double timing_offset;
     int video_sync;
+    bool video_catchup;
+    double video_catchup_giveup;
 
     struct m_geometry android_surface_size;
 
@@ -266,8 +268,6 @@ typedef struct MPOpts {
     float audio_delay;
     float default_max_pts_correction;
     int autosync;
-    bool video_catchup;
-    double video_catchup_giveup;
     int frame_dropping;
     bool video_latency_hacks;
     int term_osd;
